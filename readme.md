@@ -2,9 +2,8 @@
 本篇文章中，主要实现的是如何使用OpenGL画一个三角形和矩形，我分为下几个步骤来说明：
 - OpenGL的语言GLSL
 - 编译OpenGL的语言
-- 创建一些顶点缓冲区
-- 设置一些顶点坐标
-- 将坐标传给OpenGL
+- 创建顶点缓冲区
+- 将图形画出来
 
 ## OpenGL的语言GLSL
 它和C语言类似，可以声明一些变量（`a_Position`），有一个main的入口函数，有系统内置的变量（`gl_Position`）。
@@ -92,14 +91,14 @@ void main(void) {
 ## 创建顶点缓冲区
 我们这里画两个图形，所以创建两个顶点缓冲区，并将对应的顶点坐标存储到顶点缓冲区中。
 ```objc
-- (void)setupVAO {
+- (void)setupVBO {
     GLfloat triangleVertices[] = {
         -0.4, 0.0, 0.0,
          0.0, 0.4, 0.0,
          0.5, 0.0, 0.0,
     };
-    glGenBuffers(1, &_triangleVAO);
-    glBindBuffer(GL_ARRAY_BUFFER, _triangleVAO);
+    glGenBuffers(1, &_triangleVBO);
+    glBindBuffer(GL_ARRAY_BUFFER, _triangleVBO);
     glBufferData(GL_ARRAY_BUFFER, sizeof(triangleVertices), triangleVertices, GL_STATIC_DRAW);
     
     GLfloat rectangleVertices[] = {
@@ -108,8 +107,8 @@ void main(void) {
          0.4, -0.8, 0.0,
          0.4, -0.4, 0.0,
     };
-    glGenBuffers(1, &_rectangleVAO);
-    glBindBuffer(GL_ARRAY_BUFFER, _rectangleVAO);
+    glGenBuffers(1, &_rectangleVBO);
+    glBindBuffer(GL_ARRAY_BUFFER, _rectangleVBO);
     glBufferData(GL_ARRAY_BUFFER, sizeof(rectangleVertices), rectangleVertices, GL_STATIC_DRAW);
 }
 ```
@@ -128,13 +127,13 @@ void main(void) {
     glClear(GL_COLOR_BUFFER_BIT);
     
     [_triangleShader prepareToDraw];
-    glBindBuffer(GL_ARRAY_BUFFER, _triangleVAO);
+    glBindBuffer(GL_ARRAY_BUFFER, _triangleVBO);
     glEnableVertexAttribArray(GLKVertexAttribPosition);
     glVertexAttribPointer(GLKVertexAttribPosition, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
     glDrawArrays(GL_TRIANGLES, 0, 3);
     
     [_rectangleShader prepareToDraw];
-    glBindBuffer(GL_ARRAY_BUFFER, _rectangleVAO);
+    glBindBuffer(GL_ARRAY_BUFFER, _rectangleVBO);
     glEnableVertexAttribArray(GLKVertexAttribPosition);
     glVertexAttribPointer(GLKVertexAttribPosition, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
     glDrawArrays(GL_TRIANGLE_FAN, 0, 4);
